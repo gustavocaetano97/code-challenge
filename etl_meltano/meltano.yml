@@ -61,7 +61,7 @@ plugins:
       pip_url: git+https://github.com/AE-nv/tap-parquet.git
       config:
         files:
-          - path: /project/data/local_data/{stream}/{{ execution_date }}.parquet
+          - path: /project/data/local_data/{stream}/
             entity: {stream: null}
 
   loaders:
@@ -81,7 +81,7 @@ plugins:
       pip_url: git+https://github.com/Automattic/target-parquet.git
       config:
         destination_path: >
-          '$TARGET_PARQUET_DESTINATION_PATH'
+          /project/data/local_data/
         compression: snappy
 
   transformers:

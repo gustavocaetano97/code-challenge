@@ -1,0 +1,7 @@
+FROM meltano/meltano:latest-python3.10
+
+COPY ./etl_meltano /project
+
+WORKDIR /project
+
+CMD ["meltano", "run"]

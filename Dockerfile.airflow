@@ -1,0 +1,14 @@
+FROM apache/airflow:2.10.4
+
+RUN pip install apache-airflow-providers-docker
+
+ENV AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+ENV AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+ENV AIRFLOW__CELERY__RESULT_BACKEND=db+postgresql://airflow:airflow@postgres/airflow
+ENV AIRFLOW__CELERY__BROKER_URL=redis://:@redis:6379/0
+ENV AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=false
+ENV AIRFLOW__CORE__LOAD_EXAMPLES=false
+
+ENV AIRFLOW_UID=50000
+
+CMD ["scheduler"]
