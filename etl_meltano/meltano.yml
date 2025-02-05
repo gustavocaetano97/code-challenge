@@ -81,7 +81,7 @@ plugins:
       pip_url: git+https://github.com/Automattic/target-parquet.git
       config:
         destination_path: >
-          /project/data/local_data/
+          /project/data/local_data/extract
         compression: snappy
 
   transformers:
