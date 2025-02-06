@@ -1,5 +1,103 @@
 ---
+
+x-meltano-image: &meltano-image
+  build: .
+
+x-meltano-env: &meltano-env
+  MELTANO_DATABASE_URI: postgresql://postgres:postgres@meltano-system-db/meltano
+  # Add any additional Meltano configuration environment variables here
+
+# # Uncomment if you are using the Airflow orchestrator, delete otherwise
+#x-airflow-env: &airflow-env
+#   AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://:airflow:airflow@airflowdb:5432/airflow
+#   AIRFLOW__CORE__EXECUTOR: LocalExecutor
+
 services:
+  meltano:
+    <<: *meltano-image
+    environment:
+      <<: *meltano-env
+      #<<: *airflow-env ]
+    volumes:
+      - db_meltano_logs:/project/.meltano/logs/elt
+      - ./etl_meltano:/project
+    expose:
+      - 5000
+    ports:
+      - 5000:5000
+    depends_on:
+      - meltano-system-db
+    networks:
+      - meltano
+      - airflow
+    restart: unless-stopped
+
+  meltano-system-db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres # CHANGE ME
+      POSTGRES_DB: meltano
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - db_meltano:/var/lib/postgresql/data
+    expose:
+      - 5432
+    networks:
+      - meltano
+    restart: unless-stopped
+
+  # # Uncomment if you are using the Airflow orchestrator, delete otherwise
+  airflow-scheduler:
+    <<: *meltano-image
+    command: invoke airflow scheduler
+    environment:
+      <<: *meltano-env
+      #<<: *airflow-env ]
+    volumes:
+      - db_meltano_logs:/project/.meltano/logs/elt
+    expose:
+      - 8793
+    depends_on:
+      - meltano-system-db
+      - airflowdb
+    networks:
+      - meltano
+      - airflow
+    restart: unless-stopped
+
+ # airflow-webserver:
+  #  <<: *meltano-image
+  #  command: invoke airflow webserver
+  #  environment:
+  #    <<: *meltano-env
+  #    #<<: *airflow-env ]
+  #  expose:
+  #    - 8080
+  #  ports:
+  #    - 8080:8080
+  #  depends_on:
+  #    - meltano-system-db
+  #    - airflowdb
+  #  networks:
+  #    - meltano
+  #    - airflow
+  #  restart: unless-stopped
+  #
+  airflowdb:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: airflow # CHANGE ME
+      POSTGRES_DB: airflow
+      POSTGRES_USER: airflow
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - db_airflow:/var/lib/postgresql/data
+    expose:
+      - 5432
+    networks:
+      - airflow
+    restart: unless-stopped
+
   db_north:
     image: postgres:13
     environment:
@@ -8,7 +106,7 @@ services:
       POSTGRES_PASSWORD: thewindisblowing
     volumes:
       - ./etl_meltano/data/northwind.sql:/docker-entrypoint-initdb.d/northwind.sql
-      - db_north_data:/var/lib/postgresql/data
+      - ./db_north:/var/lib/postgresql/data
     networks:
       - meltano
     ports:
@@ -26,7 +124,7 @@ services:
       POSTGRES_USER: finalwind_user
       POSTGRES_PASSWORD: finalwindisblowing
     volumes:
-      - db_final_data:/var/lib/postgresql/data
+      - ./db_final:/var/lib/postgresql/data
     networks:
       - meltano
     ports:
@@ -38,23 +136,20 @@ services:
       retries: 5
     restart: unless-stopped
 
-  meltano:
-    image: meltano/meltano:latest-python3.10
-    depends_on:
-      db_north:
-        condition: service_healthy
-      db_final:
-        condition: service_healthy
-    volumes:
-      - ./etl_meltano:/project
-    networks:
-      - meltano
-    command: ["meltano", "--help"]
-
-volumes:
-  db_north_data:
-  db_final_data:
-
 networks:
   meltano:
-    driver: bridge
+  # # Uncomment if you are using the Airflow orchestrator, delete otherwise
+  airflow:
+
+volumes:
+  db_meltano:
+    driver: local
+  db_meltano_logs:
+    driver: local
+  # # Uncomment if you are using the Airflow orchestrator, delete otherwise
+  db_north:
+    driver: local
+  db_airflow:
+    driver: local
+  db_final:
+    driver: local

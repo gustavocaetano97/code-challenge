@@ -1,103 +1,120 @@
----
 default_environment: dev
 project_id: 25def286-c8d8-49fc-859b-1e54dbd0fb11
 
 environments:
-  - name: dev
-  - name: staging
-  - name: prod
+- name: dev
+- name: staging
+- name: prod
 
 plugins:
   extractors:
-    - name: tap-postgres
-      variant: meltanolabs
-      pip_url: git+https://github.com/MeltanoLabs/tap-postgres.git
-      config:
-        host: db_north
-        port: 5432
-        user: northwind_user
-        password: thewindisblowing
-        database: northwind
-        schema: public
-        filter_schemas:
-          - public
-        start_date: '{{ execution_date }}'
-        exclude_schemas:
-          - information_schema
-          - pg_catalog
-        mappings:
-          bpchar:
-            type: string
-        select:
-          public.categories: '*'
-          public.products: '*'
-          public.suppliers: '*'
-          public.customers: '*'
-          public.customer_customer_demo: '*'
-          public.customer_demographics: '*'
-          public.shippers: '*'
-          public.us_states: '*'
-          public.employees: '*'
-          public.employee_territories: '*'
-          public.territories: '*'
-          public.region: '*'
+  - name: tap-postgres
+    variant: meltanolabs
+    pip_url: git+https://github.com/MeltanoLabs/tap-postgres.git
+    config:
+      host: db_north
+      port: 5432
+      user: northwind_user
+      password: thewindisblowing
+      database: northwind
+      schema: public
+      filter_schemas:
+      - public
+      start_date: '{{ execution_date }}'
+      exclude_schemas:
+      - information_schema
+      - pg_catalog
+      mappings:
+        bpchar:
+          type: string
+      select:
+        public.categories: '*'
+        public.products: '*'
+        public.suppliers: '*'
+        public.customers: '*'
+        public.customer_customer_demo: '*'
+        public.customer_demographics: '*'
+        public.shippers: '*'
+        public.us_states: '*'
+        public.employees: '*'
+        public.employee_territories: '*'
+        public.territories: '*'
+        public.region: '*'
 
-    - name: tap-csv
-      variant: meltanolabs
-      pip_url: git+https://github.com/MeltanoLabs/tap-csv.git
-      config:
-        files:
-          - path: /project/data/order_details.csv
-            entity: order_details
-            keys:
-              - order_id
-              - product_id
-            delimiter: ','
-            quotechar: '"'
-        add_metadata_columns: false
+  - name: tap-csv
+    variant: meltanolabs
+    pip_url: git+https://github.com/MeltanoLabs/tap-csv.git
+    config:
+      files:
+      - path: /project/data/order_details.csv
+        entity: order_details
+        keys:
+        - order_id
+        - product_id
+        delimiter: ','
+        quotechar: '"'
+      add_metadata_columns: false
 
-    - name: tap-parquet
-      variant: ae-nv
-      pip_url: git+https://github.com/AE-nv/tap-parquet.git
-      config:
-        files:
-          - path: /project/data/local_data/{stream}/{{ execution_date }}.parquet
-            entity: {stream: null}
+  - name: tap-parquet
+    variant: ae-nv
+    pip_url: git+https://github.com/AE-nv/tap-parquet.git
+    config:
+      files:
+      - path: /project/data/local_data/{stream}/{{ execution_date }}.parquet
+        entity: {stream: null}
 
   loaders:
-    - name: target-postgres
-      variant: meltanolabs
-      pip_url: meltanolabs-target-postgres
-      config:
-        host: db_final
-        port: 5432
-        user: finalwind_user
-        password: finalwindisblowing
-        database: finalwind
-        schema: final_schema
+  - name: target-postgres
+    variant: meltanolabs
+    pip_url: meltanolabs-target-postgres
+    config:
+      host: db_final
+      port: 5432
+      user: finalwind_user
+      password: finalwindisblowing
+      database: finalwind
+      schema: final_schema
 
-    - name: target-parquet
-      variant: automattic
-      pip_url: git+https://github.com/Automattic/target-parquet.git
-      config:
-        destination_path: >
-          '$TARGET_PARQUET_DESTINATION_PATH'
-        compression: snappy
+  - name: target-parquet
+    variant: automattic
+    pip_url: git+https://github.com/Automattic/target-parquet.git
+    config:
+      destination_path: >
+        '$TARGET_PARQUET_DESTINATION_PATH'
+      compression: snappy
 
   transformers:
-    - name: dbt-postgres
-      variant: dbt-labs
-      pip_url: dbt-core~=1.3.0 dbt-postgres~=1.3.0
-      config:
-        profiles_dir: /project/data/sql_final/dbt_profiles
-        project_dir: /project/data/sql_final/dbt_project
-        profile_name: orders_with_details
-        outputs:
-          dev:
-            type: postgres
-            host: db_final
-            port: 5432
-            user: finalwind_user
-            password: finalwindisblowing
-            database: finalwind
-            schema: final_schema_transformed
+  - name: dbt-postgres
+    variant: dbt-labs
+    pip_url: dbt-core~=1.3.0 dbt-postgres~=1.3.0
+    config:
+      profiles_dir: /project/data/sql_final/dbt_profiles
+      project_dir: /project/data/sql_final/dbt_project
+      profile_name: orders_with_details
+      outputs:
+        dev:
+          type: postgres
+          host: db_final
+          port: 5432
+          user: finalwind_user
+          password: finalwindisblowing
+          database: finalwind
+          schema: final_schema_transformed
+
+  utilities:
+  - name: airflow
+    variant: apache
+    pip_url: >
+      git+https://github.com/meltano/airflow-ext.git@main
+      apache-airflow==2.8.1
+      psycopg2-binary
+      graphviz
+      --constraint
+      https://raw.githubusercontent.com/apache/airflow/constraints-2.8.1/constraints-no-providers-${MELTANO__PYTHON_VERSION}.txt
+    config:
+      database:
+        sql_alchemy_conn: postgresql+psycopg2://airflow:airflow@airflowdb:5432/airflow
+
+      core:
+        executor: LocalExecutor
+version: 1
