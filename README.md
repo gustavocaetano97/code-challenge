@@ -2,6 +2,23 @@
 
 Code challenge for Software Developer with focus in data projects.
 
+## Start
+
+### Para começar a usar o projeto rode o docker-compose.yml com:
+
+docker-compose up --build -d
+
+### Entre no container do airflow scheduler com:
+
+docker-compose exec -it airflow-scheduler bash
+
+### Rode o comando para listar as DAG:
+
+airflow dags list
+
+### Dispare uma DAG
+
+airflow dags trigger nome_da_dag
 
 ## Context
 
@@ -18,7 +35,7 @@ The CSV file represents details of orders from an ecommerce system.
 
 The database provided is a sample database provided by microsoft for education purposes called northwind, the only difference is that the **order_detail** table does not exists in this database you are beeing provided with. This order_details table is represented by the CSV file we provide.
 
-Schema of the original Northwind Database: 
+Schema of the original Northwind Database:
 
 ![image](https://user-images.githubusercontent.com/49417424/105997621-9666b980-608a-11eb-86fd-db6b44ece02a.png)
 
