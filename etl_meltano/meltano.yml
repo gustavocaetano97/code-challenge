@@ -12,7 +12,7 @@ plugins:
       variant: meltanolabs
       pip_url: git+https://github.com/MeltanoLabs/tap-postgres.git
       config:
-        host: db_north
+        host: north-db
         port: 5432
         user: ${NORTHWIND_DB_USER}
         password: ${NORTHWIND_DB_PASSWORD}
@@ -20,7 +20,7 @@ plugins:
         schema: public
         filter_schemas:
           - public
-        start_date: '{{ execution_date }}'
+        start_date: ${EXECUTION_DATE}
         exclude_schemas:
           - information_schema
           - pg_catalog
@@ -68,7 +68,7 @@ plugins:
       variant: meltanolabs
       pip_url: meltanolabs-target-postgres
       config:
-        host: db_final
+        host: final-db
         port: 5432
         user: ${FINALWIND_DB_USER}
         password: ${FINALWIND_DB_PASSWORD}
@@ -80,7 +80,7 @@ plugins:
       pip_url: git+https://github.com/Automattic/target-parquet.git
       config:
         destination_path: >
-          /project/data/local_data/extract
+          /project/data/local_data/${MELTANO_EXTRACTOR_NAME}/${EXECUTION_DATE}
         compression: snappy
 
   transformers:
@@ -94,12 +94,12 @@ plugins:
         outputs:
           dev:
             type: postgres
-            host: db_final
+            host: final-db
             port: 5432
-            user: finalwind_user
-            password: finalwindisblowing
-            database: finalwind
-            schema: final_schema_transformed
+            user: ${FINALWIND_DB_USER}
+            password: ${FINALWIND_DB_PASSWORD}
+            database: ${FINALWIND_DB_NAME}
+            schema: final_schema
 
   utilities:
   - name: airflow
