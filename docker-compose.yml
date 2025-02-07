@@ -4,18 +4,15 @@ x-meltano-image: &meltano-image
   build: .
 
 x-meltano-env: &meltano-env
-  MELTANO_DATABASE_URI: postgresql://postgres:postgres@meltano-system-db/meltano
-  # Add any additional Meltano configuration environment variables here
-
-# # Uncomment if you are using the Airflow orchestrator, delete otherwise
-# x-airflow-env: &airflow-env
-# AIRFLOW__CORE__SQL_ALCHEMY_CONN: >
-#   postgresql+psycopg2://:airflow:airflow@airflowdb:5432/airflow
-# AIRFLOW__CORE__EXECUTOR: LocalExecutor
+  MELTANO_DATABASE_URI: ${MELTANO_DATABASE_URI}
+#  AIRFLOW__CORE__SQL_ALCHEMY_CONN: ${AIRFLOW_DATABASE_URI}
+#  AIRFLOW__CORE__EXECUTOR: LocalExecutor
 
 services:
   meltano:
     <<: *meltano-image
+    env_file:
+      - .env
     environment:
       <<: *meltano-env
       # <<: *airflow-env ]
@@ -32,13 +29,13 @@ services:
     networks:
       - meltano
       - airflow
-    restart: unless-stopped
 
   meltano-system-db:
     image: postgres
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: meltano
+      POSTGRES_PASSWORD: ${MELTANO_DB_PASSWORD}
+      POSTGRES_DB: ${MELTANO_DB_NAME}
+      POSTGRES_USER: ${MELTANO_DB_USER}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - db_meltano:/var/lib/postgresql/data
@@ -53,6 +50,8 @@ services:
   airflow-scheduler:
     <<: *meltano-image
     command: invoke airflow scheduler
+    env_file:
+      - .env
     environment:
       <<: *meltano-env
       # <<: *airflow-env ]
@@ -63,15 +62,16 @@ services:
       - 8793
     depends_on:
       - meltano-system-db
-      - airflowdb
+      - airflow-system-db
     networks:
       - meltano
       - airflow
-    restart: unless-stopped
 
   airflow-webserver:
     <<: *meltano-image
     command: invoke airflow webserver
+    env_file:
+      - .env
     environment:
       <<: *meltano-env
       # <<: *airflow-env ]
@@ -84,18 +84,17 @@ services:
       - 8080:8080
     depends_on:
       - meltano-system-db
-      - airflowdb
+      - airflow-system-db
     networks:
       - meltano
       - airflow
-    restart: unless-stopped
 
-  airflowdb:
+  airflow-system-db:
     image: postgres
     environment:
-      POSTGRES_PASSWORD: airflow
-      POSTGRES_DB: airflow
-      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: ${AIRFLOW_DB_PASSWORD}
+      POSTGRES_DB: ${AIRFLOW_DB_NAME}
+      POSTGRES_USER: ${AIRFLOW_DB_USER}
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - db_airflow:/var/lib/postgresql/data
@@ -105,12 +104,12 @@ services:
       - airflow
     restart: unless-stopped
 
-  db_north:
+  north-db:
     image: postgres:13
     environment:
-      POSTGRES_DB: northwind
-      POSTGRES_USER: northwind_user
-      POSTGRES_PASSWORD: thewindisblowing
+      POSTGRES_DB: ${NORTHWIND_DB_NAME}
+      POSTGRES_USER: ${NORTHWIND_DB_USER}
+      POSTGRES_PASSWORD: ${NORTHWIND_DB_PASSWORD}
     volumes:
       - ./etl_meltano/data/northwind.sql:/docker-entrypoint-initdb.d/northwind.sql
       - ./db_north:/var/lib/postgresql/data
@@ -124,12 +123,12 @@ services:
       timeout: 5s
       retries: 5
 
-  db_final:
+  final-db:
     image: postgres:13
     environment:
-      POSTGRES_DB: finalwind
-      POSTGRES_USER: finalwind_user
-      POSTGRES_PASSWORD: finalwindisblowing
+      POSTGRES_DB: ${FINALWIND_DB_NAME}
+      POSTGRES_USER: ${FINALWIND_DB_USER}
+      POSTGRES_PASSWORD: ${FINALWIND_DB_PASSWORD}
     volumes:
       - ./db_final:/var/lib/postgresql/data
     networks:

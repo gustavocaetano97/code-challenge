@@ -9,7 +9,7 @@ default_args = {
 }
 
 with DAG(
-    'meltano_move_data',
+    'extract_to_local',
     default_args=default_args,
     schedule_interval='@daily',
     start_date=datetime(2025, 3, 1),
