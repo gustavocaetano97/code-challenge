@@ -1,0 +1,116 @@
+2025-02-07T21:22:45.717939Z [warning  ] No state was found, complete import.
+2025-02-07T21:22:47.183802Z [error    ] Cannot start plugin tap-postgres: Catalog discovery failed: command ['/project/.meltano/extractors/tap-postgres/venv/bin/tap-postgres', '--config', '/project/.meltano/run/tap-postgres/tap.01b81d87-c242-45fa-8d71-3dde74dcc2c6.config.json', '--discover'] returned 1 with stderr:
+ Traceback (most recent call last):
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 146, in __init__
+    self._dbapi_connection = engine.raw_connection()
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 3298, in raw_connection
+    return self.pool.connect()
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 449, in connect
+    return _ConnectionFairy._checkout(self)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 1263, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/impl.py", line 179, in _do_get
+    with util.safe_reraise():
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/impl.py", line 177, in _do_get
+    return self._create_connection()
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 390, in _create_connection
+    return _ConnectionRecord(self)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
+    self.__connect()
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+    with util.safe_reraise():
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/create.py", line 646, in connect
+    return dialect.connect(*cargs, **cparams)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/default.py", line 622, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: could not translate host name "db_north" to address: Temporary failure in name resolution
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/project/.meltano/extractors/tap-postgres/venv/bin/tap-postgres", line 8, in <module>
+    sys.exit(TapPostgres.cli())
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/click/core.py", line 1161, in __call__
+    return self.main(*args, **kwargs)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/click/core.py", line 1081, in main
+    with self.make_context(prog_name, args, **extra) as ctx:
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/click/core.py", line 949, in make_context
+    self.parse_args(ctx, args)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/click/core.py", line 1417, in parse_args
+    value, args = param.handle_parse_result(ctx, opts, args)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/click/core.py", line 2403, in handle_parse_result
+    value = self.process_value(ctx, value)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/click/core.py", line 2365, in process_value
+    value = self.callback(ctx, self, value)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/singer_sdk/tap_base.py", line 555, in cb_discover
+    tap.run_discovery()
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/singer_sdk/tap_base.py", line 309, in run_discovery
+    catalog_text = self.catalog_json_text
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/singer_sdk/tap_base.py", line 329, in catalog_json_text
+    return dump_json(self.catalog_dict, indent=2)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/tap_postgres/tap.py", line 549, in catalog_dict
+    result["streams"].extend(self.connector.discover_catalog_entries())
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/singer_sdk/connectors/sql.py", line 1035, in discover_catalog_entries
+    inspected = sa.inspect(engine)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/inspection.py", line 140, in inspect
+    ret = reg(subject)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/reflection.py", line 313, in _engine_insp
+    return Inspector._construct(Inspector._init_engine, bind)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/reflection.py", line 246, in _construct
+    init(self, bind)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/reflection.py", line 257, in _init_engine
+    engine.connect().close()
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 3274, in connect
+    return self._connection_cls(self)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 148, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 2439, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 146, in __init__
+    self._dbapi_connection = engine.raw_connection()
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 3298, in raw_connection
+    return self.pool.connect()
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 449, in connect
+    return _ConnectionFairy._checkout(self)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 1263, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/impl.py", line 179, in _do_get
+    with util.safe_reraise():
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/impl.py", line 177, in _do_get
+    return self._create_connection()
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 390, in _create_connection
+    return _ConnectionRecord(self)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 674, in __init__
+    self.__connect()
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 900, in __connect
+    with util.safe_reraise():
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/create.py", line 646, in connect
+    return dialect.connect(*cargs, **cparams)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/default.py", line 622, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)
+  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not translate host name "db_north" to address: Temporary failure in name resolution
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+
+2025-02-07T21:22:47.184065Z [error    ] Block run completed.           block_type=ExtractLoadBlocks err=RunnerError('Cannot start plugin tap-postgres: Catalog discovery failed: command [\'/project/.meltano/extractors/tap-postgres/venv/bin/tap-postgres\', \'--config\', \'/project/.meltano/run/tap-postgres/tap.01b81d87-c242-45fa-8d71-3dde74dcc2c6.config.json\', \'--discover\'] returned 1 with stderr:\n Traceback (most recent call last):\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 146, in __init__\n    self._dbapi_connection = engine.raw_connection()\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 3298, in raw_connection\n    return self.pool.connect()\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 449, in connect\n    return _ConnectionFairy._checkout(self)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 1263, in _checkout\n    fairy = _ConnectionRecord.checkout(pool)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 712, in checkout\n    rec = pool._do_get()\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/impl.py", line 179, in _do_get\n    with util.safe_reraise():\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__\n    raise exc_value.with_traceback(exc_tb)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/impl.py", line 177, in _do_get\n    return self._create_connection()\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 390, in _create_connection\n    return _ConnectionRecord(self)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 674, in __init__\n    self.__connect()\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 900, in __connect\n    with util.safe_reraise():\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__\n    raise exc_value.with_traceback(exc_tb)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 896, in __connect\n    self.dbapi_connection = connection = pool._invoke_creator(self)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/create.py", line 646, in connect\n    return dialect.connect(*cargs, **cparams)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/default.py", line 622, in connect\n    return self.loaded_dbapi.connect(*cargs, **cparams)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect\n    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)\npsycopg2.OperationalError: could not translate host name "db_north" to address: Temporary failure in name resolution\n\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File "/project/.meltano/extractors/tap-postgres/venv/bin/tap-postgres", line 8, in <module>\n    sys.exit(TapPostgres.cli())\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/click/core.py", line 1161, in __call__\n    return self.main(*args, **kwargs)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/click/core.py", line 1081, in main\n    with self.make_context(prog_name, args, **extra) as ctx:\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/click/core.py", line 949, in make_context\n    self.parse_args(ctx, args)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/click/core.py", line 1417, in parse_args\n    value, args = param.handle_parse_result(ctx, opts, args)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/click/core.py", line 2403, in handle_parse_result\n    value = self.process_value(ctx, value)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/click/core.py", line 2365, in process_value\n    value = self.callback(ctx, self, value)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/singer_sdk/tap_base.py", line 555, in cb_discover\n    tap.run_discovery()\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/singer_sdk/tap_base.py", line 309, in run_discovery\n    catalog_text = self.catalog_json_text\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/singer_sdk/tap_base.py", line 329, in catalog_json_text\n    return dump_json(self.catalog_dict, indent=2)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/tap_postgres/tap.py", line 549, in catalog_dict\n    result["streams"].extend(self.connector.discover_catalog_entries())\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/singer_sdk/connectors/sql.py", line 1035, in discover_catalog_entries\n    inspected = sa.inspect(engine)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/inspection.py", line 140, in inspect\n    ret = reg(subject)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/reflection.py", line 313, in _engine_insp\n    return Inspector._construct(Inspector._init_engine, bind)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/reflection.py", line 246, in _construct\n    init(self, bind)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/reflection.py", line 257, in _init_engine\n    engine.connect().close()\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 3274, in connect\n    return self._connection_cls(self)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 148, in __init__\n    Connection._handle_dbapi_exception_noconnection(\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 2439, in _handle_dbapi_exception_noconnection\n    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 146, in __init__\n    self._dbapi_connection = engine.raw_connection()\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/base.py", line 3298, in raw_connection\n    return self.pool.connect()\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 449, in connect\n    return _ConnectionFairy._checkout(self)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 1263, in _checkout\n    fairy = _ConnectionRecord.checkout(pool)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 712, in checkout\n    rec = pool._do_get()\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/impl.py", line 179, in _do_get\n    with util.safe_reraise():\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__\n    raise exc_value.with_traceback(exc_tb)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/impl.py", line 177, in _do_get\n    return self._create_connection()\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 390, in _create_connection\n    return _ConnectionRecord(self)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 674, in __init__\n    self.__connect()\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 900, in __connect\n    with util.safe_reraise():\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/util/langhelpers.py", line 146, in __exit__\n    raise exc_value.with_traceback(exc_tb)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/pool/base.py", line 896, in __connect\n    self.dbapi_connection = connection = pool._invoke_creator(self)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/create.py", line 646, in connect\n    return dialect.connect(*cargs, **cparams)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/sqlalchemy/engine/default.py", line 622, in connect\n    return self.loaded_dbapi.connect(*cargs, **cparams)\n  File "/project/.meltano/extractors/tap-postgres/venv/lib/python3.10/site-packages/psycopg2/__init__.py", line 122, in connect\n    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)\nsqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not translate host name "db_north" to address: Temporary failure in name resolution\n\n(Background on this error at: https://sqlalche.me/e/20/e3q8)\n') exit_codes={} set_number=0 success=False

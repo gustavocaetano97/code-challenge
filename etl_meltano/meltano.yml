@@ -14,9 +14,9 @@ plugins:
       config:
         host: db_north
         port: 5432
-        user: northwind_user
-        password: thewindisblowing
-        database: northwind
+        user: ${NORTHWIND_DB_USER}
+        password: ${NORTHWIND_DB_PASSWORD}
+        database: ${NORTHWIND_DB_NAME}
         schema: public
         filter_schemas:
           - public
@@ -70,9 +70,9 @@ plugins:
       config:
         host: db_final
         port: 5432
-        user: finalwind_user
-        password: finalwindisblowing
-        database: finalwind
+        user: ${FINALWIND_DB_USER}
+        password: ${FINALWIND_DB_PASSWORD}
+        database: ${FINALWIND_DB_NAME}
         schema: final_schema
 
     - name: target-parquet

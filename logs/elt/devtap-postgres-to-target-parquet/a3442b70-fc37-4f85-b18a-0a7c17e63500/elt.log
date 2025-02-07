@@ -1,2 +1,0 @@
-2025-02-06T03:09:28.356430Z [error    ] Another 'dev:tap-postgres-to-target-parquet' pipeline is already running which started at 2025-02-06 03:09:26.881575+00:00. To ignore this check use the '--force' option.
-2025-02-06T03:09:28.356757Z [error    ] Block run completed.           block_type=ExtractLoadBlocks err=RunnerError("Another 'dev:tap-postgres-to-target-parquet' pipeline is already running which started at 2025-02-06 03:09:26.881575+00:00. To ignore this check use the '--force' option.") exit_codes={} set_number=0 success=False

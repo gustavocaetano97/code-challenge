@@ -12,7 +12,7 @@ with DAG(
     'extract_to_local',
     default_args=default_args,
     schedule_interval='@daily',
-    start_date=datetime(2025, 3, 1),
+    start_date=datetime(2023, 1, 1),
     catchup=False,
 ) as dag:
     extract_csv = BashOperator(
@@ -23,14 +23,10 @@ with DAG(
     move_csv = BashOperator(
         task_id='move_csv_to_date_folder',
         bash_command="""
-        date_path=$(date +'%Y-%m-%d')
-        mkdir -p /project/data/local_data/csv/$date_path
-        for stream_dir in /project/data/local_data/extract/*; do
-            if [ -d "$stream_dir" ]; then
-                mv "$stream_dir" /project/data/local_data/csv/$date_path/
-            fi
-        done
-    """,
+            date_path=$(date +'%Y-%m-%d')
+            mkdir -p /project/data/local_data/csv/$date_path
+            mv /project/data/local_data/extract/* /project/data/local_data/csv/$date_path/
+        """,
     )
 
     extract_postgres = BashOperator(
@@ -41,14 +37,10 @@ with DAG(
     move_postgres = BashOperator(
         task_id='move_postgres_to_date_folder',
         bash_command="""
-        date_path=$(date +'%Y-%m-%d')
-        mkdir -p /project/data/local_data/csv/$date_path
-        for stream_dir in /project/data/local_data/extract/*; do
-            if [ -d "$stream_dir" ]; then
-                mv order_details /project/data/local_data/csv/$date_path/
-            fi
-        done
-    """,
+            date_path=$(date +'%Y-%m-%d')
+            mkdir -p /project/data/local_data/postgres/$date_path
+            mv /project/data/local_data/extract/* /project/data/local_data/postgres/$date_path/
+        """,
     )
 
     extract_csv >> move_csv
