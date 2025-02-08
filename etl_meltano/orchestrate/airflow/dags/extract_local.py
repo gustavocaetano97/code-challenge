@@ -14,7 +14,7 @@ def get_execution_date(**context):
     return context['execution_date'].strftime("%Y-%m-%d")
 
 with DAG(
-    'extract_to_local',
+    'extract_local',
     default_args=default_args,
     schedule_interval='@daily',
     start_date=datetime(2023, 1, 1),

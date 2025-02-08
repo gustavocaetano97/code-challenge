@@ -59,11 +59,18 @@ plugins:
       variant: ae-nv
       pip_url: git+https://github.com/AE-nv/tap-parquet.git
       config:
-        files:
-          - path: /project/data/local_data/tap-csv/${EXECUTION_DATE}/*.parquet
-            entity: csv_data
-          - path: /project/data/local_data/tap-postgres/${EXECUTION_DATE}/public-orders/*.parquet
-            entity: postgres_data
+        config:
+      files:
+        - path: /project/data/local_data/tap-csv/${EXECUTION_DATE}/*.parquet
+          entity: csv_data
+          pattern: "*.parquet"
+          format: "parquet"
+        - path: /project/data/local_data/tap-postgres/${EXECUTION_DATE}/public-orders/*.parquet
+          entity: postgres_data
+          pattern: "*.parquet"
+          format: "parquet"
+      default_replication_method: "FULL_TABLE"
+      batch_size: 1000
 
   loaders:
     - name: target-postgres
