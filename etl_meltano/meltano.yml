@@ -60,8 +60,10 @@ plugins:
       pip_url: git+https://github.com/AE-nv/tap-parquet.git
       config:
         files:
-          - path: /project/data/local_data/{stream}/
-            entity: {stream: null}
+          - path: /project/data/local_data/tap-csv/${EXECUTION_DATE}/*.parquet
+            entity: csv_data
+          - path: /project/data/local_data/tap-postgres/${EXECUTION_DATE}/public-orders/*.parquet
+            entity: postgres_data
 
   loaders:
     - name: target-postgres
