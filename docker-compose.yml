@@ -19,7 +19,9 @@ services:
     volumes:
       - ./etl_meltano:/project
       - ./logs/elt:/project/.meltano/logs/elt
-      - ./etl_meltano/data/local_data:/project/data/local_data
+      - ./etl_meltano/data/tap-csv:/project/data/tap-csv
+      - ./etl_meltano/data/tap-postgres:/project/data/tap-postgres
+      - ./etl_meltano/.meltano:/project/.meltano
     expose:
       - 5000
     ports:
@@ -56,7 +58,9 @@ services:
       # <<: *airflow-env ]
     volumes:
       - ./logs/elt:/project/.meltano/logs/elt
-      - ./etl_meltano/data/local_data:/project/data/local_data
+      - ./etl_meltano/data/tap-csv:/project/data/tap-csv
+      - ./etl_meltano/data/tap-postgres:/project/data/tap-postgres
+      - ./etl_meltano/.meltano:/project/.meltano
     expose:
       - 8793
     depends_on:
@@ -78,7 +82,9 @@ services:
       - 8080
     volumes:
       - ./logs/elt:/project/.meltano/logs/elt
-      - ./etl_meltano/data/local_data:/project/data/local_data
+      - ./etl_meltano/data/tap-csv:/project/data/tap-csv
+      - ./etl_meltano/data/tap-postgres:/project/data/tap-postgres
+      - ./etl_meltano/.meltano:/project/.meltano
     ports:
       - 8080:8080
     depends_on:
